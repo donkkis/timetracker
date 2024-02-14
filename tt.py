@@ -1,30 +1,8 @@
 import argparse
 from datetime import datetime
-from sqlalchemy import create_engine, Column, Integer, String, DateTime, ForeignKey
-from sqlalchemy.orm import sessionmaker, relationship, declarative_base
+from services import get_session, Project, TimeEntry
 
-# Define the database models
-Base = declarative_base()
-
-class Project(Base):
-    __tablename__ = 'projects'
-    id = Column(Integer, primary_key=True)
-    name = Column(String, unique=True)
-    time_entries = relationship("TimeEntry", back_populates="project")
-
-class TimeEntry(Base):
-    __tablename__ = 'time_entries'
-    id = Column(Integer, primary_key=True)
-    project_id = Column(Integer, ForeignKey('projects.id'))
-    start_time = Column(DateTime)
-    end_time = Column(DateTime)
-    project = relationship("Project", back_populates="time_entries")
-
-# Database setup
-engine = create_engine('sqlite:///time_tracker.db')
-Base.metadata.create_all(engine)
-Session = sessionmaker(bind=engine)
-session = Session()
+session = get_session()
 
 # Command functions
 def workon(args):
@@ -115,6 +93,7 @@ def today(args):
         hours = int(duration)
         minutes = int((duration - hours) * 60)
         print(f"{project}: {hours} hours, {minutes} minutes")
+
 
 def main(args):
     args.func(args)
