@@ -1,6 +1,6 @@
 import argparse
 from services import get_session
-from commands import workon, stopwork, status, today, report
+from commands import workon, stopwork, status, today, report, projects
 
 def main(args):
     session = get_session()
@@ -30,6 +30,9 @@ if __name__ == '__main__':
     today_parser = subparsers.add_parser('today', help='Show today\'s time entries and total \
                                           duration per project')
     today_parser.set_defaults(func=today)
+
+    projects_parser = subparsers.add_parser('projects', help='Display available projects')
+    projects_parser.set_defaults(func=projects)
 
     args = parser.parse_args()
 

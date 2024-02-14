@@ -7,9 +7,18 @@ def _project_currently_worked_on(project: str, session):
                             .filter(TimeEntry.end_time == None).all()
     if project in map(lambda e: e[0], active_entries):
         return True
-    return False
+    return False    
 
 # Command functions
+def projects(args, session):
+    projects = session.query(Project)
+    if projects.count() > 0:
+        print('Available projects are:')
+        for p in projects:
+            print(p.name)
+    else:
+        print('No projects added yet - start working on one by saying `tt workon <project>`')
+
 def workon(args, session):
     project_name = args.project
     if _project_currently_worked_on(project_name, session):
