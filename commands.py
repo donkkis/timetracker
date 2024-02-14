@@ -1,9 +1,20 @@
 from datetime import datetime
 from services import Project, TimeEntry
 
+def _project_currently_worked_on(project: str, session):
+    active_entries = session.query(Project.name, TimeEntry.start_time)\
+                            .join(TimeEntry)\
+                            .filter(TimeEntry.end_time == None).all()
+    if project in map(lambda e: e[0], active_entries):
+        return True
+    return False
+
 # Command functions
 def workon(args, session):
     project_name = args.project
+    if _project_currently_worked_on(project_name, session):
+        print(f'Already working on {project_name}')
+        return
     project = session.query(Project).filter_by(name=project_name).first()
     if not project:
         project = Project(name=project_name)
