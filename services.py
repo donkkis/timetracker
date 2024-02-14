@@ -1,3 +1,4 @@
+import os
 from sqlalchemy import create_engine, Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.orm import sessionmaker, relationship, declarative_base
 
@@ -18,7 +19,10 @@ class TimeEntry(Base):
     end_time = Column(DateTime)
     project = relationship("Project", back_populates="time_entries")
 
-def get_session(conn_str: str = 'sqlite:///time_tracker.db'):
+def get_session():
+    home_dir = os.getenv('HOME')
+    os.makedirs(os.path.join(home_dir, '.time_tracker'), exist_ok=True)
+    conn_str = f'sqlite:///{home_dir}/.time_tracker/time_tracker.db'
     engine = create_engine(conn_str)
     Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
